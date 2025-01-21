@@ -11,5 +11,5 @@ export type Product = {
   price: number;
   discount: Discount;
   rating: number;
-  description: string;
+  description?: string;
 };
