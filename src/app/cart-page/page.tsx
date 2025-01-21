@@ -308,7 +308,7 @@ export default function CartPage() {
 
 
     const customer = await createCustomerInSanity(formData);
-    console.log("CUSTOMER< > ", customer._id );
+    console.log("CUSTOMER< > ", customer?._id );
 
     if(customer){
       const order = await createOrderInSanity(cart, customer._id, totalPrice, adjustedTotalPrice);
@@ -319,11 +319,11 @@ export default function CartPage() {
         email: formData.email,
         phone: formData.phone,
         address: {
-          street1: formData.street1  || "123 Main St",
-          city: formData.city || "CA",
-          state: formData.state || "US",
-          zip: formData.zip ||  94105,
-          country: formData.country || "US",
+          street1:"123 Main St",
+          city:  "CA",
+          state: "US",
+          zip:  94105,
+          country:  "US",
         }
       };
 
