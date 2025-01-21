@@ -18,6 +18,7 @@ const DressStyleCard = ({ title, url, className }: DressStyleCardProps) => {
       ])}
     >
       {title}
+      
     </Link>
   );
 };

@@ -4,11 +4,12 @@ export type Discount = {
 };
 
 export type Product = {
-  id: number;
+  id: string;
   title: string;
   srcUrl: string;
   gallery?: string[];
   price: number;
   discount: Discount;
   rating: number;
+  description: string;
 };

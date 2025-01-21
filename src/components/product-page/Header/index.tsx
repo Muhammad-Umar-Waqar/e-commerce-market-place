@@ -34,7 +34,7 @@ const Header = ({ data }: { data: Product }) => {
               readonly
             />
             <span className="text-black text-xs sm:text-sm ml-[11px] sm:ml-[13px] pb-0.5 sm:pb-0">
-              {data.rating.toFixed(1)}
+              {data.rating?.toFixed(1)}
               <span className="text-black/60">/5</span>
             </span>
           </div>
@@ -77,8 +77,7 @@ const Header = ({ data }: { data: Product }) => {
             )}
           </div>
           <p className="text-sm sm:text-base text-black/60 mb-5">
-            This graphic t-shirt which is perfect for any occasion. Crafted from
-            a soft and breathable fabric, it offers superior comfort and style.
+           {data.description}
           </p>
           <hr className="h-[1px] border-t-black/10 mb-5" />
           <ColorSelection />
