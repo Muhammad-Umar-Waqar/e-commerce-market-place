@@ -265,39 +265,75 @@ export default function CartPage() {
   }
 
 
-  const createOrderInSanity = async (cartData: Product[], customer_id:any, totalPrice:any, adjustedTotalPrice:any) => {
-      try{
-        const orderObject = {
-          _type : "order",
-          customer: {
-            _type: "reference",
-            _ref: customer_id
-          },
-          cart: cartData?.items?.map((item:any) => ({
-                _type: "object", // Each cart item is an object
-                id: item.id,
-                name: item.name,
-                srcUrl: item.srcUrl, // Assuming `image` is the URL in your `cartData`
-                price: item.price,
-                attributes: item.attributes || [], // Attributes (if available)
-                quantity: item.quantity,
-              })),
+  // const createOrderInSanity = async (cartData: Product[], customer_id:any, totalPrice:any, adjustedTotalPrice:any) => {
+  //     try{
+  //       const orderObject = {
+  //         _type : "order",
+  //         customer: {
+  //           _type: "reference",
+  //           _ref: customer_id
+  //         },
+  //         cart: cartData?.items.map((item:any) => ({
+  //               _type: "object", // Each cart item is an object
+  //               id: item.id,
+  //               name: item.name,
+  //               srcUrl: item.srcUrl, // Assuming `image` is the URL in your `cartData`
+  //               price: item.price,
+  //               attributes: item.attributes || [], // Attributes (if available)
+  //               quantity: item.quantity,
+  //             })),
           
-          totalPrice : adjustedTotalPrice ? adjustedTotalPrice  : totalPrice,
+  //         totalPrice : adjustedTotalPrice ? adjustedTotalPrice  : totalPrice,
           
-            }
+  //           }
 
-        const response = await client.create(orderObject);
+  //       const response = await client.create(orderObject);
       
-        console.log("Order Object Created SuccessFully", response);
-        return response;
+  //       console.log("Order Object Created SuccessFully", response);
+  //       return response;
 
-      } catch(e){
-        console.log("Error creating Order In Sanity ", e)
+  //     } catch(e){
+  //       console.log("Error creating Order In Sanity ", e)
         
-      }
+  //     }
 
-  }
+  // }
+
+  
+  const createOrderInSanity = async (
+    cartData: any,
+    customer_id: any,
+    totalPrice: any,
+    adjustedTotalPrice: any
+  ) => {
+    try {
+      const orderObject = {
+        _type: "order",
+        customer: {
+          _type: "reference",
+          _ref: customer_id,
+        },
+        cart: cartData.map((item:any) => ({
+          _type: "object", // Each cart item is an object
+          id: item.id,
+          name: item.name,
+          srcUrl: item.srcUrl, // Assuming `srcUrl` is a valid property in `Product`
+          price: item.price,
+          attributes: item.attributes || [], // Attributes (if available)
+          quantity: item.quantity,
+        })),
+        totalPrice: adjustedTotalPrice || totalPrice,
+      };
+  
+      const response = await client.create(orderObject);
+  
+      console.log("Order Object Created Successfully", response);
+      return response;
+    } catch (e) {
+      console.log("Error creating Order In Sanity", e);
+    }
+  };
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
