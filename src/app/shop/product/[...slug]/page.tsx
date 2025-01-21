@@ -31,9 +31,11 @@ export default async function ProductPage({
   params: { slug: string[] };
 }) {
     const data = await getProducts();
-    const productData = data.find(
-      (product: { id: string; }): Product[] => product.id == params.slug[0]
-    );
+    // const productData = data.find(
+    //   (product: { id: string; }): Product[] => product.id == params.slug[0]
+    // );
+
+    const productData = data.find((product: Product) => product.id == params.slug[0]);
     
   
 
