@@ -4,7 +4,7 @@ export type Discount = {
 };
 
 export type Product = {
-  id: string;
+  id: string | Number;
   title: string;
   srcUrl: string;
   gallery?: string[];
