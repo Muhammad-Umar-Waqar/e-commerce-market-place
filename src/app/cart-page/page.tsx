@@ -189,7 +189,7 @@ export default function CartPage() {
 
 
 
-  const createShipment = async (order, customer) => {
+  const createShipment = async (order:any, customer:any) => {
     try {
       const response = await fetch("/api/shippoOrder", {
         method: "POST",
@@ -212,7 +212,7 @@ export default function CartPage() {
             zip: String("94345"),
             country: customer.address.country || "US",
           },
-          parcels: order.cart.map((item) => ({
+          parcels: order.cart.map((item:any) => ({
             length: 10,
             width: 5,
             height: 4,
@@ -265,7 +265,7 @@ export default function CartPage() {
   }
 
 
-  const createOrderInSanity = async (cartData: Product[], customer_id, totalPrice, adjustedTotalPrice) => {
+  const createOrderInSanity = async (cartData: Product[], customer_id:any, totalPrice:any, adjustedTotalPrice:any) => {
       try{
         const orderObject = {
           _type : "order",
@@ -273,7 +273,7 @@ export default function CartPage() {
             _type: "reference",
             _ref: customer_id
           },
-          cart: cartData.items.map((item) => ({
+          cart: cartData?.items?.map((item:any) => ({
                 _type: "object", // Each cart item is an object
                 id: item.id,
                 name: item.name,
