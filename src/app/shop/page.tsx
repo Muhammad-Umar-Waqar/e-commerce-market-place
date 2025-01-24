@@ -451,7 +451,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 
-export const listners: any = {};
+// export const listners: any = {};
 export default function ShopPage() {
   const [loadingData, setLoadingData] = useState<boolean>(false);
   const [data, setData] = useState<any>();
