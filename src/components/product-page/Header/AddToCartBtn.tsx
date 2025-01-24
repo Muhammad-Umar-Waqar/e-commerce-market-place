@@ -7,6 +7,7 @@ import { Product } from "@/types/product.types";
 import React from "react";
 
 const AddToCartBtn = ({ data }: { data: Product & { quantity: number } }) => {
+  console.log("data?:", data);
   const dispatch = useAppDispatch();
   const { sizeSelection, colorSelection } = useAppSelector(
     (state: RootState) => state.products
@@ -19,7 +20,7 @@ const AddToCartBtn = ({ data }: { data: Product & { quantity: number } }) => {
       onClick={() =>
         dispatch(
           addToCart({
-            id: String(data.id),
+            id: data.id,
             name: data.title,
             srcUrl: data.srcUrl,
             price: data.price,

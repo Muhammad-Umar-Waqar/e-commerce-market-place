@@ -23,7 +23,7 @@ export type RemoveCartItem = {
 };
 
 export type CartItem = {
-  id: number;
+  id: number | string;
   name: string;
   srcUrl: string;
   price: number;
@@ -121,12 +121,12 @@ export const cartsSlice = createSlice({
         calcAdjustedTotalPrice(state.totalPrice, action.payload);
     },
     removeCartItem: (state, action: PayloadAction<RemoveCartItem>) => {
-      if (state.cart === null) return;
+      if (state.cart == null) return;
 
       // check item in cart
       const isItemInCart = state.cart.items.find(
         (item) =>
-          action.payload.id === item.id &&
+          action.payload.id == item.id &&
           compareArrays(action.payload.attributes, item.attributes)
       );
 
@@ -136,7 +136,7 @@ export const cartsSlice = createSlice({
           items: state.cart.items
             .map((eachCartItem) => {
               if (
-                eachCartItem.id === action.payload.id
+                eachCartItem.id == action.payload.id
                   ? !compareArrays(
                       eachCartItem.attributes,
                       isItemInCart.attributes
