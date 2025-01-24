@@ -8,8 +8,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ReviewCard from "@/components/reuse/ReviewCard";
-import { reviewsData } from "@/app/page";
 import Link from "next/link";
+import { reviewsData } from "@/lib/utils";
 
 const ReviewsContent = () => {
   return (
