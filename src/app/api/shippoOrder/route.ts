@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     const shippoResponse = await fetch("https://api.goshippo.com/shipments/", {
       method: "POST",
       headers: {
-        Authorization: `ShippoToken shippo_test_9963812e4b73c909e3712983995385d68dec5481`,
+        Authorization: `ShippoToken ${process.env.SHIPPO_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({

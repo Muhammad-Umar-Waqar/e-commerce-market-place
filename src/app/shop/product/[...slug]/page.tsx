@@ -1,16 +1,12 @@
-import {
-  ArrivalData,
-  relatedProductData,
-  topSellingData,
-} from "@/app/page";
+
 import ProductListSec from "@/components/reuse/ProductListSec";
 import BreadcrumbProduct from "@/components/product-page/BreadcrumbProduct";
 import Header from "@/components/product-page/Header";
 import Tabs from "@/components/product-page/Bars";
-import { Product } from "@/types/product.types";
 import { notFound } from "next/navigation";
 import { client } from "@/sanity/lib/client";
 import { getProducts } from "@/lib/utils";
+// import { getElectronicProducts } from "@/lib/utils";
 
 
 
@@ -30,12 +26,45 @@ export default async function ProductPage({
 }: {
   params: { slug: string[] };
 }) {
-    const data = await getProducts();
+    
+
+  const encodedCategory = params.slug[1];
+  const category = decodeURIComponent(encodedCategory); // Decode the category
+
+  console.log("Category:", category); // Should log "men's clothing"
+
+    // const data = await getProducts("mens's clothing");
+    const productData: any = await client.fetch(
+      `*[_type == "product" && _id == "${params.slug[0]}" && tags[0] == "${category}"][0]{
+        "id": _id,
+        "title": name,
+        description,
+        "srcUrl": image.asset->url,
+        price,
+        "category": tags[0],
+        "discount": {
+          "percentage": discountPercentage,
+          "amount": 0
+        }, 
+        "rating" : rating,
+      }`
+    );
+
+    
+    const categories = ["electronics", "men's clothing", "women's clothing", "jewelery"];
+
+    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+
+    const relatedproducts = await getProducts(randomCategory);
+
+
+
+
     // const productData = data.find(
     //   (product: { id: string; }): Product[] => product.id == params.slug[0]
     // );
 
-    const productData = data.find((product: Product) => product.id == params.slug[0]);
+    // const productData = data.find((product: Product) => product.id == params.slug[0]);
     
   
 
@@ -54,7 +83,7 @@ export default async function ProductPage({
         <Tabs />
       </div>
       <div className="mb-[50px] sm:mb-20">
-        <ProductListSec title="You might also like" data={relatedProductData} />
+        <ProductListSec title="You might also like" data={relatedproducts} />
       </div>
     </main>
   );

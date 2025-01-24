@@ -1,3 +1,4 @@
+'use client'
 import { cn } from "@/lib/utils";
 import { integralCF } from "@/styles/fonts";
 import Link from "next/link";
@@ -34,15 +35,15 @@ const data: NavMenu = [
       },
       {
         id: 13,
-        label: "Kids clothes",
-        url: "/shop#kids-clothes",
-        description: "For all ages, with happy and beautiful colors",
+        label: "Jewellery",
+        url: "/shop#jewelery",
+        description: "gift to your wife, your sisters and your daughters",
       },
       {
         id: 14,
-        label: "Bags and Shoes",
-        url: "/shop#bag-shoes",
-        description: "Suitable for men, women and all tastes and styles",
+        label: "Electronics",
+        url: "/shop#electronics",
+        description: "Every Housemen needs basic electronic items for daily use",
       },
     ],
   },
@@ -69,7 +70,12 @@ const data: NavMenu = [
   },
 ];
 
+
 const TopNavbar = () => {
+
+  
+
+
   return (
     <nav className="sticky top-0 bg-white z-20">
       <div className="flex relative max-w-frame mx-auto items-center justify-between md:justify-start py-5 md:py-6 px-4 xl:px-0">
@@ -92,10 +98,10 @@ const TopNavbar = () => {
             {data.map((item) => (
               <React.Fragment key={item.id}>
                 {item.type === "MenuItem" && (
-                  <MenuItem label={item.label} url={item.url} />
+                  <MenuItem label={item.label} url={item.url}  />
                 )}
                 {item.type === "MenuList" && (
-                  <MenuList data={item.children} label={item.label} />
+                  <MenuList data={item.children} label={item.label}  />
                 )}
               </React.Fragment>
             ))}

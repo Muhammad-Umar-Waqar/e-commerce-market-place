@@ -25,6 +25,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+
 import {
   Card,
   CardContent,
@@ -53,7 +54,9 @@ export default function CartPage() {
     (state: RootState) => state.carts
   );
 
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
 
+  
 
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -226,7 +229,6 @@ export default function CartPage() {
       });
   
       if (!response.ok) {
-        throw new Error("Failed to create shipment");
         toast.error("Failed to create shipment");
       }
   
@@ -343,36 +345,45 @@ export default function CartPage() {
     console.log("adjustedTotalPrice ", adjustedTotalPrice);
 
 
-    const customer = await createCustomerInSanity(formData);
-    console.log("CUSTOMER< > ", customer?._id );
+    
 
-    if(customer){
-      const order = await createOrderInSanity(cart, customer._id, totalPrice, adjustedTotalPrice);
-
-
-      const customerDetails = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        address: {
-          street1:"123 Main St",
-          city:  "CA",
-          state: "US",
-          zip:  94105,
-          country:  "US",
+    try {
+      setLoadingSubmit(true);
+      const customer = await createCustomerInSanity(formData);
+      console.log("CUSTOMER< > ", customer?._id );
+  
+      if(customer){
+        const order = await createOrderInSanity(cart, customer._id, totalPrice, adjustedTotalPrice);
+  
+  
+        const customerDetails = {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          address: {
+            street1:"123 Main St",
+            city:  "CA",
+            state: "US",
+            zip:  94105,
+            country:  "US",
+          }
+        };
+  
+        const shipment = await createShipment(order, customerDetails);
+        if(shipment){
+          console.log("Shipment Created Successfully", shipment);
+          toast.success("Shipment Created Succesfully!");
+              setFormData({
+          name: "",
+          email: "",
+          phone: "",
+              })
         }
-      };
-
-      const shipment = await createShipment(order, customerDetails);
-      if(shipment){
-        console.log("Shipment Created Successfully", shipment);
-        toast.success("Shipment Created Succesfully!");
-            setFormData({
-        name: "",
-        email: "",
-        phone: "",
-            })
       }
+    } catch (error) {
+      toast.error("Failed to Create Shipment")
+    } finally{
+      setLoadingSubmit(false);
     }
 
   };
@@ -524,7 +535,7 @@ export default function CartPage() {
           <CardFooter>
             <div className="flex justify-between w-full">
               <AlertDialogCancel className="text-gray-500 hover:text-gray-700">Cancel</AlertDialogCancel>
-              <AlertDialogAction className="bg-blue-600 text-white hover:bg-blue-700" onClick={handleSubmit}>Submit</AlertDialogAction>
+              <AlertDialogAction className={` bg-blue-600 text-white hover:bg-blue-700 ${loadingSubmit ? "bg-gray-600" :"bg-blue-600" }` }  disabled={loadingSubmit ? true : false} onClick={handleSubmit}>Submit</AlertDialogAction>
             </div>
           </CardFooter>
         </Card>

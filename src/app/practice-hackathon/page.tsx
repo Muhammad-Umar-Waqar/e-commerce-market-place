@@ -1,7 +1,7 @@
 
 
 
-import React, { useEffect } from 'react'
+import React from 'react'
 import {client} from '@/sanity/lib/client';
 import ListPage from '@/components/practice-hackathon/ListPage';
 

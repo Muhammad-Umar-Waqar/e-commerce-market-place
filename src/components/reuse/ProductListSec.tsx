@@ -17,6 +17,11 @@ type ProductListSecProps = {
 };
 
 const ProductListSec = ({ title, data, viewAllLink }: ProductListSecProps) => {
+
+  
+  console.log("BETA V.", data);
+
+  
   return (
     <section className="max-w-frame mx-auto text-center">
       <h2

@@ -9,6 +9,9 @@ import SizeSelection from "./SizeSelection";
 import AddToCardSection from "./AddToCardSection";
 
 const Header = ({ data }: { data: Product }) => {
+
+  console.log("Cart-btn", data);
+  
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
