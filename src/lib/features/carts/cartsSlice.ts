@@ -60,7 +60,7 @@ export const cartsSlice = createSlice({
   reducers: {
     addToCart: (state, action: PayloadAction<CartItem>) => {
       // if cart is empty then add
-      if (state.cart === null) {
+      if (state.cart == null) {
         state.cart = {
           items: [action.payload],
           totalQuantities: action.payload.quantity,
@@ -76,7 +76,7 @@ export const cartsSlice = createSlice({
       // check item in cart
       const isItemInCart = state.cart.items.find(
         (item) =>
-          action.payload.id === item.id &&
+          action.payload.id == item.id &&
           compareArrays(action.payload.attributes, item.attributes)
       );
 
@@ -85,7 +85,7 @@ export const cartsSlice = createSlice({
           ...state.cart,
           items: state.cart.items.map((eachCartItem) => {
             if (
-              eachCartItem.id === action.payload.id
+              eachCartItem.id == action.payload.id
                 ? !compareArrays(
                     eachCartItem.attributes,
                     isItemInCart.attributes
@@ -121,12 +121,12 @@ export const cartsSlice = createSlice({
         calcAdjustedTotalPrice(state.totalPrice, action.payload);
     },
     removeCartItem: (state, action: PayloadAction<RemoveCartItem>) => {
-      if (state.cart === null) return;
+      if (state.cart == null) return;
 
       // check item in cart
       const isItemInCart = state.cart.items.find(
         (item) =>
-          action.payload.id === item.id &&
+          action.payload.id == item.id &&
           compareArrays(action.payload.attributes, item.attributes)
       );
 
@@ -136,7 +136,7 @@ export const cartsSlice = createSlice({
           items: state.cart.items
             .map((eachCartItem) => {
               if (
-                eachCartItem.id === action.payload.id
+                eachCartItem.id == action.payload.id
                   ? !compareArrays(
                       eachCartItem.attributes,
                       isItemInCart.attributes
@@ -169,7 +169,7 @@ export const cartsSlice = createSlice({
       // check item in cart
       const isItemInCart = state.cart.items.find(
         (item) =>
-          action.payload.id === item.id &&
+          action.payload.id == item.id &&
           compareArrays(action.payload.attributes, item.attributes)
       );
 
@@ -178,7 +178,7 @@ export const cartsSlice = createSlice({
       state.cart = {
         ...state.cart,
         items: state.cart.items.filter((pItem) => {
-          return pItem.id === action.payload.id
+          return pItem.id == action.payload.id
             ? !compareArrays(pItem.attributes, isItemInCart.attributes)
             : pItem.id !== action.payload.id;
         }),
