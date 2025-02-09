@@ -720,7 +720,11 @@ export default function CartPage() {
 
 
            <AlertDialog>
-  <AlertDialogTrigger>Open</AlertDialogTrigger>
+  <AlertDialogTrigger>
+     <Button className="rounded-full w-24" asChild>
+            Track
+            </Button>
+  </AlertDialogTrigger>
   <AlertDialogContent>
     <AlertDialogHeader>
       <AlertDialogDescription>
