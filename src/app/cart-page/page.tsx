@@ -720,7 +720,7 @@ export default function CartPage() {
 
 
            <AlertDialog>
-  <AlertDialogTrigger className="rounded-full w-24 ">
+  <AlertDialogTrigger className="rounded-full w-24  bg-primary text-primary-foreground shadow hover:bg-primary/90 py-[5px] px-1">
             Track
           
   </AlertDialogTrigger>
