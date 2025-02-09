@@ -14,6 +14,8 @@ import InputGroup from "@/components/ui/input-group";
 import Link from "next/link";
 import { MdOutlineLocalOffer } from "react-icons/md";
 import { TbBasketExclamation } from "react-icons/tb";
+
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +27,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+
 
 import {
   Card,
@@ -39,14 +42,32 @@ import { Product } from "@/types/product.types";
 import axios from "axios";
 import { toast } from "react-toastify";
 
+import {
+  useForm
+} from "react-hook-form"
+import {
+  zodResolver
+} from "@hookform/resolvers/zod"
+import * as z from "zod"
 
-// Define the type for formData
-interface FormData {
-  name: string;
-  email: string;
-  phone: string;
-}
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import {
+  Input
+} from "@/components/ui/input"
 
+const formSchema = z.object({
+  name: z.string(),
+  email: z.string(),
+  phone: z.string()
+});
 
 
 export default function CartPage() {
@@ -58,23 +79,7 @@ export default function CartPage() {
 
   
 
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    email: "",
-    phone: "",
-  });
 
-
-
-
-  // Handle input changes for all fields
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
 
 
@@ -246,7 +251,7 @@ export default function CartPage() {
 
 
 
-  const createCustomerInSanity = async (customerInfo: FormData) =>{
+  const createCustomerInSanity = async (customerInfo: z.infer < typeof formSchema >) =>{
       try{
         const customerObject = {
           _type : "customer",
@@ -337,19 +342,79 @@ export default function CartPage() {
   // };
   
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("userData", formData); // Log the entire form data
+  // const handleSubmit = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   console.log("userData", formData); // Log the entire form data
+  //   console.log("Cart Data ", cart);
+  //   console.log("total Price ", totalPrice);
+  //   console.log("adjustedTotalPrice ", adjustedTotalPrice);
+
+
+    
+
+  //   try {
+  //     setLoadingSubmit(true);
+  //     const customer = await createCustomerInSanity(formData);
+  //     console.log("CUSTOMER< > ", customer?._id );
+  
+  //     if(customer){
+  //       const order = await createOrderInSanity(cart, customer._id, totalPrice, adjustedTotalPrice);
+  
+  
+  //       const customerDetails = {
+  //         name: formData.name,
+  //         email: formData.email,
+  //         phone: formData.phone,
+  //         address: {
+  //           street1:"123 Main St",
+  //           city:  "CA",
+  //           state: "US",
+  //           zip:  94105,
+  //           country:  "US",
+  //         }
+  //       };
+  
+  //       const shipment = await createShipment(order, customerDetails);
+  //       if(shipment){
+  //         console.log("Shipment Created Successfully", shipment);
+  //         toast.success("Shipment Created Succesfully!");
+  //             setFormData({
+  //         name: "",
+  //         email: "",
+  //         phone: "",
+  //             })
+  //       }
+  //     }
+  //   } catch (error) {
+  //     toast.error("Failed to Create Shipment")
+  //   } finally{
+  //     setLoadingSubmit(false);
+  //   }
+
+  // };
+
+
+  const form = useForm < z.infer < typeof formSchema >> ({
+    resolver: zodResolver(formSchema),
+
+  })
+
+
+    async function onSubmit(values: z.infer < typeof formSchema > ) {
+
+    console.log("userData", values); // Log the entire form data
     console.log("Cart Data ", cart);
     console.log("total Price ", totalPrice);
     console.log("adjustedTotalPrice ", adjustedTotalPrice);
 
 
-    
+
 
     try {
+       console.log(values);
       setLoadingSubmit(true);
-      const customer = await createCustomerInSanity(formData);
+      const customer = await createCustomerInSanity(values);
+      
       console.log("CUSTOMER< > ", customer?._id );
   
       if(customer){
@@ -357,9 +422,9 @@ export default function CartPage() {
   
   
         const customerDetails = {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
           address: {
             street1:"123 Main St",
             city:  "CA",
@@ -373,11 +438,7 @@ export default function CartPage() {
         if(shipment){
           console.log("Shipment Created Successfully", shipment);
           toast.success("Shipment Created Succesfully!");
-              setFormData({
-          name: "",
-          email: "",
-          phone: "",
-              })
+             
         }
       }
     } catch (error) {
@@ -386,13 +447,52 @@ export default function CartPage() {
       setLoadingSubmit(false);
     }
 
+    }
+
+
+
+
+
+    const [trackingNumber, setTrackingNumber] = useState("");
+    const [trackingData, setTrackingData] = useState<any | null>(null);
+    const [isTracking, setIsTracking] = useState(false);
+
+    
+    
+  const handleTrackShipment = async () => {
+    if (!trackingNumber) {
+      alert("Please enter a tracking number");
+      return;
+    }
+
+    setIsTracking(true);
+    try {
+      const carrier = "shippo";
+      const orderId = "12345";
+      const response = await fetch("/api/liveTracking", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // body: JSON.stringify({ trackingNumber, carrier, orderId }),
+      });
+
+      const data = await response.json();
+      if (response.ok && data?.trackingDetails) {
+        setTrackingData(data);
+      } else {
+        setTrackingData(null);
+      }
+    } catch (error) {
+      console.log("Error fetching tracking status:", error);
+      setTrackingData(null);
+    } finally {
+      setIsTracking(false);
+    }
   };
 
 
-
-
-
-
+  
   return (
     <main className="pb-20">
       <div className="max-w-frame xl:px-0 mx-auto px-4 ">
@@ -490,7 +590,7 @@ export default function CartPage() {
           </CardHeader>
           
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            {/* <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium">Name</label>
                 <input
@@ -529,15 +629,80 @@ export default function CartPage() {
                   required
                 />
               </div>
+            </form> */}
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl mx-auto py-10">
+              
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input 
+                      placeholder="Enter your user name"
+                      
+                      type="text"
+                      {...field} />
+                    </FormControl>
+                    
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input 
+                      placeholder="Enter your email"
+                      
+                      type="email"
+                      {...field} />
+                    </FormControl>
+                    
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field  }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <Input 
+                      placeholder="Enter your Phone Number"
+                      
+                      type=""
+                      {...field} />
+                    </FormControl>
+                    
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex justify-between items-center">
+              <Button type="submit">Submit</Button>
+              <AlertDialogCancel className="text-gray-500 hover:text-gray-700">Cancel</AlertDialogCancel>
+              </div>
+
             </form>
+          </Form>
           </CardContent>
           
-          <CardFooter>
-            <div className="flex justify-between w-full">
-              <AlertDialogCancel className="text-gray-500 hover:text-gray-700">Cancel</AlertDialogCancel>
-              <AlertDialogAction className={` bg-blue-600 text-white hover:bg-blue-700 ${loadingSubmit ? "bg-gray-600" :"bg-blue-600" }` }  disabled={loadingSubmit ? true : false} onClick={handleSubmit}>Submit</AlertDialogAction>
-            </div>
-          </CardFooter>
+        
+              
+              {/* <AlertDialogAction className={` bg-blue-600 text-white hover:bg-blue-700 ${loadingSubmit ? "bg-gray-600" :"bg-blue-600" }` }  disabled={loadingSubmit ? true : false} onClick={handleSubmit}>Submit</AlertDialogAction> */}
+          
         </Card>
       </AlertDialogContent>
     </AlertDialog>
@@ -548,12 +713,94 @@ export default function CartPage() {
           <div className="flex items-center flex-col text-gray-300 mt-32">
             <TbBasketExclamation strokeWidth={1} className="text-6xl" />
             <span className="block mb-4">Your shopping cart is empty.</span>
+            <div className="flex items-center gap-2">
             <Button className="rounded-full w-24" asChild>
               <Link href="/shop">Shop</Link>
             </Button>
+
+
+           <AlertDialog>
+  <AlertDialogTrigger>Open</AlertDialogTrigger>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogDescription>
+      <div className="mt-6 bg-white p-6 rounded-lg  shadow-lg shadow-gray-600">
+  <h1 className="text-2xl font-bold mb-4">Track Your Shipment</h1>
+  <p className="p-2">Write (SHIPPO_TRANSIT) in input field to track history</p>
+  <div className="flex space-x-4 mb-6">
+    <input
+      type="text"
+      placeholder="Tracking Number"
+      value={trackingNumber}
+      onChange={(e) => setTrackingNumber(e.target.value)}
+      className="p-2 border rounded-md w-full"
+    />
+    <button
+      onClick={handleTrackShipment}
+      className="bg-blue-500 text-white p-2 rounded-md"
+    >
+      Track
+    </button>
+  </div>
+  
+  {isTracking && <p className="text-gray-500">Loading...</p>}
+        {trackingData && trackingData.trackingDetails && (
+          <div className="bg-gray-100 p-4 rounded-lg shadow-md">
+            <h2 className="text-lg font-bold mb-4">Shipment Tracking Details</h2>
+            <p><strong>Tracking Number:</strong> {trackingData.trackingDetails.tracking_number}</p>
+            <p><strong>Carrier:</strong> {trackingData.trackingDetails.carrier}</p>
+            <p><strong>Status:</strong> {trackingData.trackingDetails.status}</p>
+            <p><strong>Status Details:</strong> {trackingData.trackingDetails.status_details || "N/A"}</p>
+            <p><strong>ETA:</strong> {trackingData.trackingDetails.eta || "N/A"}</p>
+            <p><strong>Origin:</strong> {`${trackingData.trackingDetails.address_from.city}, ${trackingData.trackingDetails.address_from.state}, ${trackingData.trackingDetails.address_from.country}`}</p>
+            <p><strong>Destination:</strong> {`${trackingData.trackingDetails.address_to.city}, ${trackingData.trackingDetails.address_to.state}, ${trackingData.trackingDetails.address_to.country}`}</p>
+            <h3 className="text-lg font-bold mt-4">Tracking History</h3>
+            {trackingData.trackingDetails.tracking_history?.filter((historyItem: any) => historyItem.status === "TRANSIT").length > 0 ? (
+              <ul className="list-disc ml-6">
+                {trackingData.trackingDetails.tracking_history.filter((historyItem: any) => historyItem.status === "TRANSIT").map((historyItem: any, index: number) => (
+                  <li key={index}>
+                    <p><strong>Date:</strong> {new Date(historyItem.status_date).toLocaleString()}</p>
+                    <p><strong>Location:</strong> {`${historyItem.location?.city || "N/A"}, ${historyItem.location?.state || "N/A"}, ${historyItem.location?.country || "N/A"}`}</p>
+                    <p><strong>Status:</strong> {historyItem.status}</p>
+                    <p><strong>Details:</strong> {historyItem.status_details || "N/A"}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No tracking history with status 'TRANSIT'.</p>
+            )}
+          </div>
+        )}
+        {!trackingData && !isTracking && (
+          <p className="text-gray-500">Enter a tracking number to see shipment details.</p>
+        )}
+
+      <AlertDialogCancel className=" mt-[2%]">Cancel</AlertDialogCancel>
+      </div>
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+  </AlertDialogContent>
+</AlertDialog>
+
+
+
+
+
+
+            </div>
           </div>
         )}
       </div>
     </main>
   );
 }
+
+
+
+
+
+
+
+
+
+

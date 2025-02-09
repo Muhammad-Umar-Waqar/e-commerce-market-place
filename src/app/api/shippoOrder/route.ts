@@ -47,6 +47,7 @@ export async function POST(req: Request) {
       status: "Shipment created successfully!",
     };
 
+    console.log("Tracking Number ", responsePayload.trackingNumber );
     return NextResponse.json(responsePayload, { status: 200 });
   } catch (error: any) {
     console.error("Error in /api/shippoOrder:", error);
